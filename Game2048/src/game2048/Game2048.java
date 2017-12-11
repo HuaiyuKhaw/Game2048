@@ -10,6 +10,9 @@ package game2048;
  * @author Huaiyu Khaw
  */
 
+import Databases.Controller;
+import Databases.Data;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -21,6 +24,10 @@ import java.util.Scanner;
 
 
     public class Game2048 extends JPanel {
+        Controller controller = new Controller();
+        private Data database;
+        private String name;
+        private List<Data> data = controller.getArrayList();
         private static final Color BG_COLOR = new Color(0xbbada0);
         private static final String FONT_NAME = "Verdana";
         private static int ROW = getRow() ;
@@ -53,7 +60,8 @@ import java.util.Scanner;
             int num;
         
         
-        public Game2048() {
+        public Game2048(String name) {
+            this.name = name;
             setPreferredSize(new Dimension(340, 400));
             setFocusable(true);
             
@@ -422,6 +430,7 @@ import java.util.Scanner;
                 g.drawString(s, xOffset + (TILE_SIZE - w) / 2, yOffset + TILE_SIZE - (TILE_SIZE - h) / 2 - 2);
 
             if (myWin || myLose) {
+                compareScore();
                 g.setColor(new Color(255, 255, 255, 30));
                 g.fillRect(0, 0, getWidth(), getHeight());
                 g.setColor(new Color(78, 139, 202));
@@ -441,6 +450,16 @@ import java.util.Scanner;
             }
             g.setFont(new Font(FONT_NAME, Font.PLAIN, 30));
             g.drawString("Score: " + myScore, 20, 950);
+
+            try{
+                g.drawString("High Score: " + data.get(0).score, 255, 555);
+            }catch (NullPointerException e){
+                database = new Data();
+                database.name = "Null";
+                database.score = 0;
+                data.set(0, database);
+                g.drawString("High Score: 0", 255, 555);
+            }
         }
 
         private static int offsetCoors(int arg) {
@@ -496,7 +515,44 @@ import java.util.Scanner;
                 return new Color(0xcdc1b4);
             }
         }
-        
+
+        private void compareScore() {
+            boolean isDuplicated = true;
+            List<Data> new_data = data;
+
+            outer:
+            for(Data check : data) {
+                // Checking whether the score can be inside the list or not
+                if (check.score <= myScore){
+                    //Check the name
+                    for (Data check2 : data){
+
+                        //If same name
+                        if (check2.name.equalsIgnoreCase(name) && data.indexOf(check) <= data.indexOf(check2)){
+                            //Update the name according to the score
+                            database = new Data();
+                            database.name = name;
+                            database.score = myScore;
+                            new_data.set(data.indexOf(check), database);
+                            break outer;
+                        }
+                        else{
+                            isDuplicated = false;
+                        }
+                    }
+                    //New Ppl
+                    if (!isDuplicated){
+                        database = new Data();
+                        database.name = name;
+                        database.score = myScore;
+                        new_data.add(data.indexOf(check), database);
+                        break;
+                    }
+                }
+            }
+            data = new_data;
+            controller.serialize(data);
+        }
         
         public static void main(String[] args) {
             JFrame game = new JFrame();
@@ -504,7 +560,7 @@ import java.util.Scanner;
             game.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             game.setSize(540, 600);
             game.setResizable(true);
-            game.add(new Game2048());
+            game.add(new Introduction().getMain_panel());
             game.setLocationRelativeTo(null);
             game.setVisible(true);
             game.setAlwaysOnTop(true);
