@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Controller {
-    List<Data> arrayList;
+    private List<Data> arrayList;
 
     public Controller(){
         try {

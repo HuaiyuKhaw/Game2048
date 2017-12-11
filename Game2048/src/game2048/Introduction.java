@@ -9,7 +9,7 @@ import java.awt.*;
 
 //Written by someone
 
-public class Introduction {
+class Introduction {
 
     // Initialize a new panel
     private JPanel main_panel = new JPanel();
