@@ -62,11 +62,15 @@ public class Game2048 extends JPanel {
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-
+                //ESC button to exit the game
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    System.exit(0);
+                }
+                //R button to reset
+                if (e.getKeyCode() == KeyEvent.VK_R) {
                     resetGame();
                 }
-
+                
                 if (e.getKeyCode() == KeyEvent.VK_B) {
                     Undo();
                     emptyTime.value = 0;
@@ -426,37 +430,73 @@ public class Game2048 extends JPanel {
 
         if (value != 0)
             g.drawString(s, xOffset + (TILE_SIZE - w) / 2, yOffset + TILE_SIZE - (TILE_SIZE - h) / 2 - 2);
-
-        if (myWin || myLose) {
-            compareScore();
-            g.setColor(new Color(255, 255, 255, 30));
-            g.fillRect(0, 0, getWidth(), getHeight());
-            g.setColor(new Color(78, 139, 202));
-            g.setFont(new Font(FONT_NAME, Font.BOLD, 80));
-            if (myWin) {
-                g.drawString("You won!", 50, 240);
-            }
-            if (myLose) {
-                g.drawString("Game over!", 10, 240);
-                g.drawString("You lose!", 60, 480);
-            }
+        
+        if(TILE_SIZE*COLUMN<400){
             if (myWin || myLose) {
-                g.setFont(new Font(FONT_NAME, Font.PLAIN, 25));
-                g.setColor(new Color(128, 128, 128, 128));
-                g.drawString("Press ESC to play again", 120, 300);
+                compareScore();
+                g.setColor(new Color(255, 255, 255, 30));
+                g.fillRect(0, 0, getWidth(), getHeight());
+                g.setColor(new Color(78, 139, 202));
+                g.setFont(new Font(FONT_NAME, Font.BOLD, 50));
+                if (myWin) {
+                    g.drawString("You won!", 80, 240);
+                }
+                if (myLose) {
+                    g.drawString("Game over!", 50, 240);
+                    g.drawString("You lose!", 80, 300);
+                }
+                if (myWin || myLose) {
+                    g.setFont(new Font(FONT_NAME, Font.PLAIN, 25));
+                    g.setColor(new Color(128, 128, 128, 128));
+                    g.drawString("Press R to play again", 90, 300);
+                    g.drawString("Press ESC to quit", 90, 325);        //Added new text
+                }
             }
-        }
-        g.setFont(new Font(FONT_NAME, Font.PLAIN, 30));
-        g.drawString("Score: " + myScore, 20, 950);
+            g.setFont(new Font(FONT_NAME, Font.PLAIN, 25));
+            g.drawString("Score: " + myScore, 0, 575);
 
-        try {
-            g.drawString("High Score: " + data.get(0).score, 255, 555);
-        } catch (NullPointerException e) {
-            database = new Data();
-            database.name = "Null";
-            database.score = 0;
-            data.set(0, database);
-            g.drawString("High Score: 0", 255, 555);
+            try {
+                g.drawString("High Score: " + data.get(0).score, 0, 550);  //Align to left
+            } catch (NullPointerException e) {
+                database = new Data();
+                database.name = "Null";
+                database.score = 0;
+                data.set(0, database);
+                g.drawString("High Score: 0", 255, 555);
+            }
+        }else{
+            if (myWin || myLose) {
+                compareScore();
+                g.setColor(new Color(255, 255, 255, 30));
+                g.fillRect(0, 0, getWidth(), getHeight());
+                g.setColor(new Color(78, 139, 202));
+                g.setFont(new Font(FONT_NAME, Font.BOLD, 50));
+                if (myWin) {
+                    g.drawString("You won!", TILE_SIZE*COLUMN/4, 240);
+                }
+                if (myLose) {
+                    g.drawString("Game over!", TILE_SIZE*COLUMN/4-TILE_SIZE/5, 240);
+                    g.drawString("You lose!", TILE_SIZE*COLUMN/4, 300);
+                }
+                if (myWin || myLose) {
+                    g.setFont(new Font(FONT_NAME, Font.PLAIN, 25));
+                    g.setColor(new Color(128, 128, 128, 128));
+                    g.drawString("Press R to play again", 120, TILE_SIZE*(ROW-1));
+                    g.drawString("Press ESC to quit", 120, TILE_SIZE*(ROW-1)+25);        //Added new text
+                }
+            }
+            g.setFont(new Font(FONT_NAME, Font.PLAIN, 25));
+            g.drawString("Score: " + myScore, 0, 575);
+
+            try {
+                g.drawString("High Score: " + data.get(0).score, 0, 550);  //Align to left
+            } catch (NullPointerException e) {
+                database = new Data();
+                database.name = "Null";
+                database.score = 0;
+                data.set(0, database);
+                g.drawString("High Score: 0", 255, 555);
+            }
         }
     }
 
@@ -579,12 +619,14 @@ public class Game2048 extends JPanel {
         JFrame game = new JFrame();
         game.setTitle("2048 Game");
         game.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        game.setSize(540, 600);
+        game.setMinimumSize(new Dimension(400, 400));                   //Set minimum size to prevent shit from happening
+        game.setSize(COLUMN*TILE_SIZE+17, ROW*TILE_SIZE+82);            //Allow the window to be flexible
         game.setResizable(true);
         game.add(new Introduction().getMain_panel());
         game.setLocationRelativeTo(null);
         game.setVisible(true);
         game.setAlwaysOnTop(true);
+        System.out.println(TILE_SIZE);
 
 
     }
