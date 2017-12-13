@@ -24,13 +24,13 @@ public class Game2048 extends JPanel {
     private List<Data> data = controller.getArrayList();
     private static final Color BG_COLOR = new Color(0xbbada0);
     private static final String FONT_NAME = "Verdana";
-    private static int ROW = getRow();
-    private static int COLUMN = getColumn();
+    private static int ROW;
+    private static int COLUMN;
     private static int newCOLUMN = COLUMN;
     private static int HOLD;
-    private static final int TILE_SIZE = (int) ((520 / ROW));
-    private static final int TILES_MARGIN = (int) ((16 / ROW) * 0.6);
-    private static Tile[] hold = new Tile[ROW * COLUMN];
+    private static int TILE_SIZE;
+    private static int TILES_MARGIN;
+    private static Tile[] hold;
     Tile emptyTime = new Tile();
 
     int undo_score = 0;
@@ -54,7 +54,14 @@ public class Game2048 extends JPanel {
     int num;
 
 
-    public Game2048(String name) {
+    public Game2048(String name, int ROW, int COLUMN) {
+        this.ROW = ROW;
+        this.COLUMN = COLUMN;
+        this.newCOLUMN = COLUMN;
+        TILE_SIZE = (520 / ROW);
+        TILES_MARGIN = (int) ((16 / ROW) * 0.6);
+        hold = new Tile[ROW * COLUMN];
+        Tile emptyTime = new Tile();
         this.name = name;
         setPreferredSize(new Dimension(340, 400));
         setFocusable(true);
@@ -619,7 +626,7 @@ public class Game2048 extends JPanel {
         JFrame game = new JFrame();
         game.setTitle("2048 Game");
         game.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        game.setMinimumSize(new Dimension(400, 400));                   //Set minimum size to prevent shit from happening
+        game.setMinimumSize(new Dimension(400, 600));                   //Set minimum size to prevent shit from happening
         game.setSize(COLUMN*TILE_SIZE+17, ROW*TILE_SIZE+82);            //Allow the window to be flexible
         game.setResizable(true);
         game.add(new Introduction().getMain_panel());

@@ -13,19 +13,30 @@ class Introduction {
 
     // Initialize a new panel
     private JPanel main_panel = new JPanel();
-
+    private JPanel second_panel = new JPanel();
     // Add Components
     private JButton start = new JButton("Start");
     private JTextField input = new JTextField(10);
+    private JTextField row = new JTextField(1);
+    private JTextField column = new JTextField(1);
 
     Introduction(){
         // Add Layout
         main_panel.setLayout(new BoxLayout(main_panel, BoxLayout.PAGE_AXIS));
         main_panel.setBackground(Color.decode("#9E9E9E"));
 
+        second_panel.setLayout(new GridLayout(1, 4));
+        second_panel.add(new JLabel("ROW", JLabel.CENTER));
+        second_panel.add(customizeTextField(row));
+        second_panel.add(new JLabel("COLUMN", JLabel.CENTER));
+        second_panel.add(customizeTextField(column));
+        second_panel.setMaximumSize(new Dimension(300,36));
         // Customize and add components
         main_panel.add(customizeTextLabel(new JLabel("2048", JLabel.CENTER)));
         main_panel.add(customizeTextField(input));
+        main_panel.add(Box.createRigidArea(new Dimension(0,16)));
+        main_panel.add(second_panel);
+        main_panel.add(Box.createRigidArea(new Dimension(0,16)));
         main_panel.add(customizeButton(start, true));
         main_panel.add(customizeButton(new JButton("High Score"), false));
     }
@@ -39,7 +50,7 @@ class Introduction {
         Font font = new Font("Roboto", Font.PLAIN, 24);
         textField.setFont(font);
         textField.setMaximumSize(textField.getPreferredSize());
-        textField.setBorder(BorderFactory.createEmptyBorder());
+        textField.setBorder(BorderFactory.createEmptyBorder(0,0,10,0));
         textField.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 
@@ -86,7 +97,7 @@ class Introduction {
                 main_panel.repaint();
                 main_panel.revalidate();
 
-                main_panel.add(new Game2048(input.getText()));
+                main_panel.add(new Game2048(input.getText(), Integer.parseInt(row.getText()), Integer.parseInt(column.getText())));
                 main_panel.repaint();
                 main_panel.revalidate();
             });
