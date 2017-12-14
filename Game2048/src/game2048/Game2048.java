@@ -1,7 +1,15 @@
 package game2048;
 
 /**
- * @author Huaiyu Khaw
+ * @author PandaLollipop
+ * A big applause to all to make this game great!
+ * Contributed by
+ * Lee Yee Run
+ * Koh Wei Zhi
+ * Ng Hao Siong
+ * Ho Kim Chuan
+ * Goh Jing Xuan
+ * Khaw Huai Yu
  */
 
 import Databases.Controller;
@@ -14,7 +22,6 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
 
 
 public class Game2048 extends JPanel {
@@ -36,18 +43,6 @@ public class Game2048 extends JPanel {
 
     static int undo_score = 0;
 
-    private static int getRow() {
-        System.out.print("Enter Row: ");
-        Scanner s = new Scanner(System.in);
-        return s.nextInt();
-    }
-
-    private static int getColumn() {
-        System.out.print("Enter Column: ");
-        Scanner s = new Scanner(System.in);
-        return s.nextInt();
-    }
-
     private Tile[] myTiles;
     boolean myWin = false;
     boolean myLose = false;
@@ -62,29 +57,28 @@ public class Game2048 extends JPanel {
         TILE_SIZE = (520 / ROW);
         TILES_MARGIN = (int) ((16 / ROW) * 0.6);
         hold = new Tile[ROW * COLUMN];
-//        Tile emptyTime = new Tile();
+
         this.name = name;
-        game.setSize(COLUMN*TILE_SIZE+16, ROW*TILE_SIZE+82);            //Allow the window to be flexible
+        game.setSize(COLUMN * TILE_SIZE + 16, ROW * TILE_SIZE + 82);            //Allow the window to be flexible
         setPreferredSize(new Dimension(340, 400));
         setFocusable(true);
 
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                //ESC button to exit the game
+                // ESC button to exit the game
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                     System.exit(0);
                 }
-                //R button to reset
+                // R button to reset
                 if (e.getKeyCode() == KeyEvent.VK_R) {
                     resetGame();
                 }
-                
+                // B button to undo
                 if (e.getKeyCode() == KeyEvent.VK_B) {
                     Undo();
                     emptyTime.value = 0;
                 }
-
 
                 if (!canMove()) {
                     myLose = true;
@@ -92,6 +86,7 @@ public class Game2048 extends JPanel {
 
                 if (!myWin && !myLose) {
                     switch (e.getKeyCode()) {
+                        // Press LEFT, RIGHT, UP, DOWN to move the tiles
                         case KeyEvent.VK_LEFT:
                             if (!remain()) {
                                 save();
@@ -149,8 +144,6 @@ public class Game2048 extends JPanel {
                             break;
                     }
                 }
-                System.out.println("MYSCORE:"+myScore);
-                System.out.println("UNDO:"+undo_score);
 
                 if (!myWin && !canMove()) {
                     myLose = true;
@@ -170,24 +163,17 @@ public class Game2048 extends JPanel {
         for (int i = 0; i < myTiles.length; i++) {
             myTiles[i] = new Tile();
         }
-        addTile();
+        addTile(); // two new tiles are added for every new game
         addTile();
 
     }
 
-    public void clear() {
-        for (int i = 0; i < ROW * COLUMN; i++) {
-            myTiles[i].value = 0;
-        }
-    }
-
-    public void Undo() {
-        //clear();
-        myScore=undo_score;
+    public void Undo() { // show the saved Tiles
+        myScore = undo_score;
         System.arraycopy(hold, 0, myTiles, 0, ROW * COLUMN);
     }
 
-    public void save() {
+    public void save() { // save the Tiles for every move
         undo_score = myScore;
         for (int i = 0; i < ROW; i++) {
             Tile[] line = getLine(i);
@@ -195,7 +181,7 @@ public class Game2048 extends JPanel {
         }
     }
 
-    public boolean remain() {
+    public boolean remain() { 
         boolean change = false;
         for (int i = 0; i < ROW; i++) {
             Tile[] line = getLine(i);
@@ -209,19 +195,16 @@ public class Game2048 extends JPanel {
     }
 
     public void left() {
-//        undo_score = myScore;
         boolean needAddTile = false;
-        for (int i = 0; i < ROW; i++) {
-            Tile[] line = getLine(i);
-            // System.arraycopy(line, 0, hold[i], 0, COLUMN);
-            Tile[] merged = mergeLine(moveLine(line));
-            setLine(i, merged);
+        for (int i = 0; i < ROW; i++) { // for every row
+            Tile[] line = getLine(i);   // get the value of each tile in a row
+            Tile[] merged = mergeLine(moveLine(line)); // every tile moves to left
+            setLine(i, merged); // show the new Tiles
             if (!needAddTile && !compare(line, merged)) {
                 needAddTile = true;
             }
 
         }
-
         if (needAddTile) {
             addTile();
         }
@@ -236,7 +219,7 @@ public class Game2048 extends JPanel {
 
     private void up() {
         myTiles = rotate(270);
-        swap();
+        swap(); // swap COLUMN & ROW, as rotated, left() is using the value of column as row, and row as column. So we swap.
         left();
         myTiles = rotate(90);
         swap();
@@ -444,11 +427,11 @@ public class Game2048 extends JPanel {
         }
     }
 
-    private void drawTile(Graphics g2, Tile tile, int x, int y) {
+    private void drawTile(Graphics g2, Tile tile, int x, int y) {   // this display the tiles
         Graphics2D g = ((Graphics2D) g2);
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
-        char value = (char) tile.value;
+        char value = (char) tile.value; // printed character on the tiles
         int xOffset = offsetCoors(x);
         int yOffset = offsetCoors(y);
         g.setColor(tile.getBackground());
@@ -467,7 +450,7 @@ public class Game2048 extends JPanel {
         if (value != 0)
             g.drawString(s, xOffset + (TILE_SIZE - w) / 2, yOffset + TILE_SIZE - (TILE_SIZE - h) / 2 - 2);
         
-        if(TILE_SIZE*COLUMN<400){
+        if(TILE_SIZE * COLUMN < 400){
             if (myWin || myLose) {
                 compareScore();
                 g.setColor(new Color(255, 255, 255, 30));
@@ -654,7 +637,7 @@ public class Game2048 extends JPanel {
     public static void main(String[] args) {
         game.setTitle("2048 Game");
         game.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        game.setMinimumSize(new Dimension(400, 600));                   //Set minimum size to prevent shit from happening
+        game.setMinimumSize(new Dimension(400, 600));                   
         game.setResizable(true);
         game.add(new Introduction().getMain_panel());
         game.setLocationRelativeTo(null);
