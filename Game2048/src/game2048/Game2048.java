@@ -32,8 +32,9 @@ public class Game2048 extends JPanel {
     private static int TILES_MARGIN;
     private static Tile[] hold;
     Tile emptyTime = new Tile();
+    static JFrame game = new JFrame();
 
-    int undo_score = 0;
+    static int undo_score = 0;
 
     private static int getRow() {
         System.out.print("Enter Row: ");
@@ -61,8 +62,9 @@ public class Game2048 extends JPanel {
         TILE_SIZE = (520 / ROW);
         TILES_MARGIN = (int) ((16 / ROW) * 0.6);
         hold = new Tile[ROW * COLUMN];
-        Tile emptyTime = new Tile();
+//        Tile emptyTime = new Tile();
         this.name = name;
+        game.setSize(COLUMN*TILE_SIZE+16, ROW*TILE_SIZE+82);            //Allow the window to be flexible
         setPreferredSize(new Dimension(340, 400));
         setFocusable(true);
 
@@ -147,6 +149,8 @@ public class Game2048 extends JPanel {
                             break;
                     }
                 }
+                System.out.println("MYSCORE:"+myScore);
+                System.out.println("UNDO:"+undo_score);
 
                 if (!myWin && !canMove()) {
                     myLose = true;
@@ -179,6 +183,7 @@ public class Game2048 extends JPanel {
 
     public void Undo() {
         //clear();
+        myScore=undo_score;
         System.arraycopy(hold, 0, myTiles, 0, ROW * COLUMN);
     }
 
@@ -194,7 +199,7 @@ public class Game2048 extends JPanel {
         boolean change = false;
         for (int i = 0; i < ROW; i++) {
             Tile[] line = getLine(i);
-            Tile[] merged = mergeLine(moveLine(line));
+            Tile[] merged = merging(moveLine(line));
             if (!compare(line, merged)) {
                 change = true;
                 break;
@@ -204,7 +209,7 @@ public class Game2048 extends JPanel {
     }
 
     public void left() {
-        undo_score = myScore;
+//        undo_score = myScore;
         boolean needAddTile = false;
         for (int i = 0; i < ROW; i++) {
             Tile[] line = getLine(i);
@@ -375,6 +380,30 @@ public class Game2048 extends JPanel {
                 }
                 i++;
             }
+            list.add(new Tile(num));
+        }
+        if (list.isEmpty()) {
+            return oldLine;
+        } else {
+            ensureSize(list, COLUMN);
+            return list.toArray(new Tile[COLUMN]);
+        }
+    }
+    
+    private Tile[] merging(Tile[] oldLine) {
+        LinkedList<Tile> list = new LinkedList<>();
+        for (int i = 0; i < COLUMN && !oldLine[i].isEmpty(); i++) {
+            num = oldLine[i].value;
+            /*if (i < COLUMN - 1 && oldLine[i].value == oldLine[i + 1].value) {
+                num++;
+                myScore += (num - 64);
+                int ourTarget = 91;
+                if (num == ourTarget) {
+                    num = 0;
+                    myWin = true;
+                }
+                i++;
+            }*/
             list.add(new Tile(num));
         }
         if (list.isEmpty()) {
@@ -623,18 +652,14 @@ public class Game2048 extends JPanel {
     }
 
     public static void main(String[] args) {
-        JFrame game = new JFrame();
         game.setTitle("2048 Game");
         game.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         game.setMinimumSize(new Dimension(400, 600));                   //Set minimum size to prevent shit from happening
-        game.setSize(COLUMN*TILE_SIZE+17, ROW*TILE_SIZE+82);            //Allow the window to be flexible
         game.setResizable(true);
         game.add(new Introduction().getMain_panel());
         game.setLocationRelativeTo(null);
         game.setVisible(true);
         game.setAlwaysOnTop(true);
-        System.out.println(TILE_SIZE);
-
 
     }
 }
