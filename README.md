@@ -1,3 +1,5 @@
 # Game2048
-I make a little adjustment
+
 This is an alphabet version 2048 game. User can change the number of rows of columns to play with different size game board. Completion is still in progress. Contributed by Wei Zhi, Richard Ho, Hao Siong, Yee Run and Jing Xuan.
+
+First school coding project. Not the cleanest and best code I've written.
